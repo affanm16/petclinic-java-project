@@ -17,6 +17,9 @@ WORKDIR /app
 # Copy the built jar from the previous stage
 COPY --from=build /workspace/target/pet-clinic-1.0.0.jar app.jar
 
+# Provide external configuration expected by the application
+COPY src/main/resources/application.properties ./application.properties
+
 EXPOSE 8081
 
 # Launch the application

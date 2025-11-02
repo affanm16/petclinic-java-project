@@ -164,12 +164,12 @@ The Jenkins pipeline will reuse this workspace when it checks out code.
 
 ### 7.1 Pipeline stages explained
 
-| Stage              | What happens                                                                                  |
-| ------------------ | --------------------------------------------------------------------------------------------- |
-| Checkout           | Pulls the latest commit from your Git repository.                                             |
-| Build & Test       | Executes `./mvnw clean verify` ensuring the code compiles and tests (currently none) run.     |
+| Stage              | What happens                                                                                   |
+| ------------------ | ---------------------------------------------------------------------------------------------- |
+| Checkout           | Pulls the latest commit from your Git repository.                                              |
+| Build & Test       | Executes `./mvnw clean verify` ensuring the code compiles and tests (currently none) run.      |
 | Build Docker Image | Builds `pet-clinic:build-<build-number>` locally on the Jenkins/EC2 host using the Dockerfile. |
-| Deploy Container   | Removes any running container named `pet-clinic` and starts a new one mapping port 8081.      |
+| Deploy Container   | Removes any running container named `pet-clinic` and starts a new one mapping port 8081.       |
 
 The pipeline uses environment variables defined at the top of `Jenkinsfile`. Adjust them if you want to rename the container or expose a different port.
 
@@ -177,7 +177,7 @@ The pipeline uses environment variables defined at the top of `Jenkinsfile`. Adj
 
 ## 8. Docker image behaviour
 
-- The multi-stage `Dockerfile` compiles the project with Maven on Java 17 and delivers a lightweight runtime image based on Eclipse Temurin 17 JRE.
+- The multi-stage `Dockerfile` compiles the project with Maven on Java 17, bakes the `application.properties` file into `/app`, and delivers a lightweight runtime image based on Eclipse Temurin 17 JRE.
 - Port `8081` is exposed—the same port configured in `application.properties`.
 
 Manual build/test commands (outside Jenkins) for reference:
