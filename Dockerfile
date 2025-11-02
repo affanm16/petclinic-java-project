@@ -10,7 +10,6 @@ COPY src ./src
 
 # Build the Spring Boot executable (runs tests by default)
 RUN mvn -B clean package
-
 FROM eclipse-temurin:17-jre
 
 WORKDIR /app
