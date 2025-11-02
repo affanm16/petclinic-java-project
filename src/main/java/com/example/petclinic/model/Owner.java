@@ -1,18 +1,13 @@
 package com.example.petclinic.model;
 
-import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 public class Owner {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String contactNumber;
-
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
-    private List<Pet> pets;
+	private Long id;
+	private String name;
+	private String contactNumber;
+	private List<Pet> pets = new ArrayList<>();
 
 	public Long getId() {
 		return id;
@@ -44,6 +39,11 @@ public class Owner {
 
 	public void setPets(List<Pet> pets) {
 		this.pets = pets;
+	}
+
+	public void addPet(Pet pet) {
+		this.pets.removeIf(existing -> existing.getId() != null && existing.getId().equals(pet.getId()));
+		this.pets.add(pet);
 	}
 
     // Getters and Setters

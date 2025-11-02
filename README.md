@@ -5,6 +5,10 @@ This guide walks through deploying the Spring Boot Pet Clinic application to an 
 > **Heads-up on Java versions**
 >
 > The Maven build targets Java 17 (see `pom.xml`). The assignment requests JDK 8 and JDK 11 on the EC2 host—install those for completeness, but make Java 17 the default for Jenkins and runtime tasks so the build succeeds.
+>
+> **No external database needed**
+>
+> The application now keeps data in memory. Restarting the container clears previous records, so you can deploy without provisioning MySQL.
 
 ---
 
@@ -179,6 +183,7 @@ The pipeline uses environment variables defined at the top of `Jenkinsfile`. Adj
 
 - The multi-stage `Dockerfile` compiles the project with Maven on Java 17, bakes the `application.properties` file into `/app`, and delivers a lightweight runtime image based on Eclipse Temurin 17 JRE.
 - Port `8081` is exposed—the same port configured in `application.properties`.
+- All clinic data is stored in-memory; restarting the container clears previously added owners, pets, and visits.
 
 Manual build/test commands (outside Jenkins) for reference:
 
@@ -205,18 +210,17 @@ After the Jenkins pipeline finishes, browse to:
 http://<ec2-public-dns>:8081
 ```
 
-Because no external database is provisioned, the CRUD screens will render but persistence features will require a database to be fully functional. You can later point the container to a managed database by supplying the appropriate `SPRING_DATASOURCE_*` environment variables.
+Data is stored in memory for the duration of the container. Restarting the container clears the records; connect a real database and update the services if you need persistence.
 
 ---
 
 ## 10. Troubleshooting tips
 
-| Issue                                                           | Resolution                                                                                                                                                                                                                               |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Jenkins build fails with `Unsupported class file major version` | Ensure the system default Java is 17 (`java -version`). Re-run `sudo alternatives --config java`.                                                                                                                                        |
-| Docker build fails due to network timeouts                      | Retry once your EC2 instance has outbound internet access. Consider increasing the root volume size.                                                                                                                                     |
-| Container exits on startup complaining about MySQL              | Either provide a MySQL endpoint or temporarily comment out the datasource properties when running locally. Jenkins deployment assumes no external database; the UI will still render but persistence calls will fail without a database. |
-| `docker: permission denied` inside pipeline                     | Confirm the Jenkins user belongs to the `docker` group (`sudo usermod -aG docker jenkins` then restart Jenkins).                                                                                                                         |
+| Issue                                                           | Resolution                                                                                                       |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Jenkins build fails with `Unsupported class file major version` | Ensure the system default Java is 17 (`java -version`). Re-run `sudo alternatives --config java`.                |
+| Docker build fails due to network timeouts                      | Retry once your EC2 instance has outbound internet access. Consider increasing the root volume size.             |
+| `docker: permission denied` inside pipeline                     | Confirm the Jenkins user belongs to the `docker` group (`sudo usermod -aG docker jenkins` then restart Jenkins). |
 
 ---
 
@@ -239,6 +243,7 @@ Terminate the EC2 instance from the AWS console to avoid ongoing costs.
 
 - Updated multi-stage `Dockerfile` targeting Java 17 for an optimized runtime container.
 - Production-ready `Jenkinsfile` implementing checkout, build, and local deployment stages on the EC2 host.
+- In-memory data stores replacing the previous MySQL dependency so the app runs without any external database.
 - This deployment playbook consolidating all AWS, Docker, and Jenkins steps into a single reference.
 
 You can now trigger the Jenkins pipeline at any time to build, containerize, and deploy the Pet Clinic application on your EC2 host without touching the application source code.

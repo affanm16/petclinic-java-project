@@ -19,4 +19,8 @@ public class OwnerService {
     public void saveOwner(Owner owner) {
         ownerRepository.save(owner);
     }
+
+    public Owner getOwner(Long id) {
+        return ownerRepository.findById(id);
+    }
 }

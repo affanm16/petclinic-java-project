@@ -1,20 +1,13 @@
 package com.example.petclinic.model;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@Entity
 public class Visit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private LocalDate date;
-    private String reason;
-    private String treatment;
-
-    @ManyToOne
-    @JoinColumn(name = "pet_id")
-    private Pet pet;
+	private Long id;
+	private LocalDate date;
+	private String reason;
+	private String treatment;
+	private Pet pet;
 
 	public Long getId() {
 		return id;
